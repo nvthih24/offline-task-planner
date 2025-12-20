@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../data/models/task_model.dart';
 import '../providers/task_provider.dart';
-
+import '../widgets/add_task_sheet.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -71,9 +71,12 @@ class _HomeScreenState extends State<HomeScreen> {
       // Nút tròn thêm việc (Floating Action Button)
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // Mở BottomSheet thêm việc (Sẽ code ở bước sau)
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Chức năng Thêm sẽ được kích hoạt ở bước kế tiếp!")),
+          // HIỆN BẢNG NHẬP LIỆU
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true, // Cho phép full chiều cao khi có phím
+            backgroundColor: Colors.transparent,
+            builder: (context) => const AddTaskSheet(),
           );
         },
         label: const Text('Thêm việc'),
