@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../data/models/task_model.dart';
+import 'package:provider/provider.dart';
+import 'highlight_text.dart';
+import '../../task_manager/logic/task_provider.dart';
 
 class TaskTile extends StatelessWidget {
   final Task task;
@@ -17,6 +20,7 @@ class TaskTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final searchQuery = context.watch<TaskProvider>().searchQuery;
     final priorityColor = AppColors.getPriorityColor(task.colorIndex);
     final isDone = task.isCompleted;
 
@@ -77,29 +81,38 @@ class TaskTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    task.title,
-                    style: TextStyle(
+                  // sua lai de text co highlight
+                  HighlightText(
+                    text: task.title,
+                    query: searchQuery,
+                    normalStyle: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.w700, // Chữ đậm vừa phải
+                      fontWeight: FontWeight.w700,
                       color: isDone
                           ? AppColors.textSecondary.withOpacity(0.5)
                           : AppColors.textPrimary,
                       decoration: isDone ? TextDecoration.lineThrough : null,
                       decorationColor: AppColors.textSecondary,
                     ),
+                    highlightStyle: const TextStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
 
                   if (task.note.isNotEmpty) ...[
                     const SizedBox(height: 6),
-                    Text(
-                      task.note,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
+                    HighlightText(
+                      text: task.note,
+                      query: searchQuery,
+                      normalStyle: TextStyle(
                         fontSize: 13,
                         color: AppColors.textSecondary.withOpacity(0.8),
                         height: 1.4,
+                      ),
+                      highlightStyle: const TextStyle(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],

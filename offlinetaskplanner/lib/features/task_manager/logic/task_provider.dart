@@ -6,11 +6,25 @@ import '../../../data/models/task_model.dart'; // Chú ý đường dẫn import
 class TaskProvider extends ChangeNotifier {
   final Box<Task> _box = Hive.box<Task>('tasks');
 
+  //them bien search
+  String _searchQuery = '';
+
+  String get searchQuery => _searchQuery;
+
   // --- SỬA ĐOẠN NÀY ---
   // Thay vì trả về một biến _tasks, hãy lấy trực tiếp từ hộp
   List<Task> get tasks {
-    // values.toList() lấy tất cả dữ liệu đang có trong hộp ra
-    final taskList = _box.values.toList().cast<Task>();
+    //khoi tao
+    var taskList = _box.values.toList().cast<Task>();
+
+    //loc theo search
+    if (_searchQuery.isNotEmpty) {
+      final query = _searchQuery.toLowerCase();
+      taskList = taskList.where((task) {
+        return task.title.toLowerCase().contains(query) ||
+            task.note.toLowerCase().contains(query);
+      }).toList();
+    }
 
     // Sắp xếp: Công việc chưa xong lên đầu, ngày gần nhất lên đầu
     taskList.sort((a, b) {
@@ -80,6 +94,18 @@ class TaskProvider extends ChangeNotifier {
     final task = _box.values.firstWhere((element) => element.id == id);
     task.isCompleted = !task.isCompleted;
     task.save();
+    notifyListeners();
+  }
+
+  // them ham search
+  void setSearchQuery(String query) {
+    _searchQuery = query;
+    notifyListeners();
+  }
+
+  // ham xoa search
+  void clearSearchQuery() {
+    _searchQuery = '';
     notifyListeners();
   }
 }

@@ -7,6 +7,7 @@ import '../../../data/models/task_model.dart';
 import '../../task_manager/logic/task_provider.dart';
 import '../../task_manager/widgets/add_task_sheet.dart';
 import '../widgets/task_tile.dart';
+import 'search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -74,7 +75,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                         child: IconButton(
-                          onPressed: () {}, // nhớ
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const SearchScreen(),
+                              ),
+                            );
+                          },
                           icon: const Icon(
                             Icons.search_rounded,
                             color: AppColors.primary,
