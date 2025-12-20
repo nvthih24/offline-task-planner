@@ -3,10 +3,10 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../data/models/task_model.dart';
 import '../../task_manager/logic/task_provider.dart';
 import '../../task_manager/widgets/add_task_sheet.dart';
 import '../widgets/task_tile.dart';
+import '../widgets/statistics_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,9 +26,12 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context, taskProvider, child) {
             final tasks = taskProvider.tasks;
             final activeTasks = tasks.where((t) => !t.isCompleted).length;
+            final int total = tasks.length;
+            final int completed = tasks.where((t) => t.isCompleted).length;
 
-            return Column(
-              children: [
+            return CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
                 // 1. PHẦN HEADER TÙY CHỈNH
                 Padding(
                   padding: const EdgeInsets.all(24.0),
@@ -82,6 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           tooltip: 'Tìm kiếm',
                         ),
                       ),
+
                       // Ngày tháng hiện tại trong 1 cái box nhỏ xinh
                       Container(
                         padding: const EdgeInsets.all(12),
@@ -123,7 +127,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-                // 2. DANH SÁCH CÔNG VIỆC
+                SliverToBoxAdapter(
+                  child: StatisticsCard(
+                    totalTasks: total,
+                    completedTasks: completed,
+                  ),
+                ),
+
+                // DANH SÁCH CÔNG VIỆC
                 Expanded(
                   child: tasks.isEmpty
                       ? _buildEmptyState()
