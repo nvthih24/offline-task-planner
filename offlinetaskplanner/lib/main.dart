@@ -6,7 +6,6 @@ import 'core/constants/app_colors.dart';
 import 'data/models/task_model.dart';
 import 'features/task_manager/logic/task_provider.dart';
 import 'features/home/screens/home_screen.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 const String taskBoxName = 'tasks';
 
