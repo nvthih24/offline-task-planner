@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
-import '../data/models/task_model.dart'; // Đảm bảo đường dẫn import đúng file model của Người
+import '../../../data/models/task_model.dart'; // Đảm bảo đường dẫn import đúng file model của Người
 
 class TaskProvider extends ChangeNotifier {
   // Tên box phải trùng với tên trong main.dart
