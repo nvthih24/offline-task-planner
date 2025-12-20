@@ -33,10 +33,9 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
   void initState() {
     super.initState();
     // KIỂM TRA: Đang sửa hay đang tạo mới?
-    final task = widget.task;
     if (widget.task != null) {
-      _titleController.text = widget.task!.title;
-      _noteController.text = widget.task!.note;
+      _titleController = TextEditingController(text: widget.task!.title);
+      _noteController = TextEditingController(text: widget.task!.note);
       _selectedDate = widget.task!.date;
       _startTime = TimeOfDay.fromDateTime(widget.task!.startTime);
       _endTime = TimeOfDay.fromDateTime(widget.task!.endTime);
