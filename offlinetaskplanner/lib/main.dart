@@ -3,7 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart'; // Import thêm Provider
 import 'data/models/task_model.dart';
 import 'providers/task_provider.dart'; // Import file provider vừa tạo
-
+import 'screens/home_screen.dart';
 const String taskBoxName = 'tasks';
 
 void main() async {
@@ -33,11 +33,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         // Thay vì hiển thị Text, ta sẽ trỏ tới HomeScreen (sẽ làm ở bước sau)
-        home: const Scaffold(
-          body: Center(
-            child: Text("Đã gắn TaskProvider thành công!\nSẵn sàng làm giao diện."),
-          ),
-        ),
+        home: const HomeScreen(),
       ),
     );
   }
