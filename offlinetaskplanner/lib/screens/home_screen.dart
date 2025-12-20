@@ -91,12 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildTaskItem(
-    BuildContext context,
-    Task task,
-    TaskProvider provider,
-  ) {
-    // Dùng DateFormat từ package intl để format ngày tháng
+  Widget _buildTaskItem(BuildContext context, Task task, TaskProvider provider) {
     String formattedDate = DateFormat('dd/MM HH:mm').format(task.date);
 
     return Padding(
@@ -104,12 +99,17 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Slidable(
         key: ValueKey(task.id),
 
-        // 1. startActionPane: VUỐT SANG PHẢI (->) ĐỂ SỬA
-        startActionPane: ActionPane(
+        // 1. startActionPane: BỎ (Không vuốt từ trái sang phải nữa)
+        startActionPane: null,
+
+        // 2. endActionPane: VUỐT TỪ PHẢI SANG TRÁI (<-)
+        // Gom cả Sửa và Xóa vào đây
+        endActionPane: ActionPane(
           motion: const ScrollMotion(),
+          extentRatio: 0.5, // Chiếm 50% bề ngang để đủ chỗ cho 2 nút
           children: [
-            // NÚT SỬA (Màu Xanh)
-            SlidableAction(
+             // --- NÚT SỬA (Màu Xanh - Hiện ra trước) ---
+             SlidableAction(
               onPressed: (context) {
                 // Gọi bảng nhập liệu để sửa
                 showModalBottomSheet(
@@ -123,34 +123,23 @@ class _HomeScreenState extends State<HomeScreen> {
               foregroundColor: Colors.white,
               icon: Icons.edit,
               label: 'Sửa',
-              // Bo góc trái cho đẹp
-              borderRadius: const BorderRadius.horizontal(
-                left: Radius.circular(12),
-              ),
+              // Bo góc trái cho nút Sửa (tiếp giáp với nội dung card)
+              borderRadius: const BorderRadius.horizontal(left: Radius.circular(12)),
             ),
-          ],
-        ),
 
-        // 2. endActionPane: VUỐT SANG TRÁI (<-) ĐỂ XÓA
-        endActionPane: ActionPane(
-          motion: const ScrollMotion(),
-          children: [
+            // --- NÚT XÓA (Màu Đỏ - Hiện ra ngoài cùng) ---
             SlidableAction(
               onPressed: (context) {
                 provider.deleteTask(task.id);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Đã xóa công việc!"),
-                    duration: Duration(seconds: 1),
-                  ),
-                );
+                    const SnackBar(content: Text("Đã xóa công việc!"), duration: Duration(seconds: 1)));
               },
               backgroundColor: Colors.redAccent,
               foregroundColor: Colors.white,
               icon: Icons.delete,
               label: 'Xóa',
-              // Bo góc phải
-              borderRadius: BorderRadius.circular(12),
+              // Bo góc phải cho nút Xóa (bo tròn đầu mút ngoài cùng)
+              borderRadius: const BorderRadius.horizontal(right: Radius.circular(12)),
             ),
           ],
         ),
