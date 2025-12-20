@@ -23,10 +23,14 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Công Việc Của Tôi',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-            Text('Hôm nay là ngày khởi đầu mới',
-                style: TextStyle(fontSize: 14, color: Colors.grey)),
+            Text(
+              'Công Việc Của Tôi',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+            ),
+            Text(
+              'Hôm nay là ngày khởi đầu mới',
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
           ],
         ),
         backgroundColor: Colors.white,
@@ -51,8 +55,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Icon(Icons.assignment_add, size: 80, color: Colors.grey[300]),
                   const SizedBox(height: 16),
-                  Text("Bạn chưa có công việc nào!",
-                      style: TextStyle(color: Colors.grey[500], fontSize: 16)),
+                  Text(
+                    "Bạn chưa có công việc nào!",
+                    style: TextStyle(color: Colors.grey[500], fontSize: 16),
+                  ),
                 ],
               ),
             );
@@ -85,7 +91,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildTaskItem(BuildContext context, Task task, TaskProvider provider) {
+  Widget _buildTaskItem(
+    BuildContext context,
+    Task task,
+    TaskProvider provider,
+  ) {
+    // Dùng DateFormat từ package intl để format ngày tháng
     String formattedDate = DateFormat('dd/MM HH:mm').format(task.date);
 
     return Padding(
@@ -97,7 +108,8 @@ class _HomeScreenState extends State<HomeScreen> {
         startActionPane: ActionPane(
           motion: const ScrollMotion(),
           children: [
-             SlidableAction(
+            // NÚT SỬA (Màu Xanh)
+            SlidableAction(
               onPressed: (context) {
                 // Gọi bảng nhập liệu để sửa
                 showModalBottomSheet(
@@ -111,8 +123,10 @@ class _HomeScreenState extends State<HomeScreen> {
               foregroundColor: Colors.white,
               icon: Icons.edit,
               label: 'Sửa',
-              // Bo góc trái
-              borderRadius: BorderRadius.circular(12),
+              // Bo góc trái cho đẹp
+              borderRadius: const BorderRadius.horizontal(
+                left: Radius.circular(12),
+              ),
             ),
           ],
         ),
@@ -125,7 +139,11 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: (context) {
                 provider.deleteTask(task.id);
                 ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Đã xóa công việc!"), duration: Duration(seconds: 1)));
+                  const SnackBar(
+                    content: Text("Đã xóa công việc!"),
+                    duration: Duration(seconds: 1),
+                  ),
+                );
               },
               backgroundColor: Colors.redAccent,
               foregroundColor: Colors.white,
@@ -151,27 +169,34 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
             border: Border(
               left: BorderSide(
-                color: _getPriorityColor(task.colorIndex), 
+                color: _getPriorityColor(task.colorIndex),
                 width: 6,
               ),
             ),
           ),
           child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
             leading: Checkbox(
               value: task.isCompleted,
               activeColor: _getPriorityColor(task.colorIndex),
               onChanged: (value) {
                 provider.toggleTaskStatus(task.id);
               },
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
             ),
             title: Text(
               task.title,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+                decoration: task.isCompleted
+                    ? TextDecoration.lineThrough
+                    : null,
                 color: task.isCompleted ? Colors.grey : Colors.black87,
               ),
             ),
@@ -206,11 +231,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Color _getPriorityColor(int index) {
     switch (index) {
-      case 0: return Colors.blue;
-      case 1: return Colors.orange;
-      case 2: return Colors.red;
-      case 3: return Colors.green;
-      default: return Colors.blue;
+      case 0:
+        return Colors.blue;
+      case 1:
+        return Colors.orange;
+      case 2:
+        return Colors.red;
+      case 3:
+        return Colors.green;
+      default:
+        return Colors.blue;
     }
   }
 }

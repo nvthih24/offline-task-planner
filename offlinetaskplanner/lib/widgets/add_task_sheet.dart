@@ -34,14 +34,13 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
     super.initState();
     // KIỂM TRA: Đang sửa hay đang tạo mới?
     final task = widget.task;
-    if (task != null) {
-      // Đang sửa: Lấy dữ liệu cũ đắp vào
-      _titleController = TextEditingController(text: task.title);
-      _noteController = TextEditingController(text: task.note);
-      _selectedDate = task.date;
-      _startTime = TimeOfDay.fromDateTime(task.startTime);
-      _endTime = TimeOfDay.fromDateTime(task.endTime);
-      _selectedColorIndex = task.colorIndex;
+    if (widget.task != null) {
+      _titleController.text = widget.task!.title;
+      _noteController.text = widget.task!.note;
+      _selectedDate = widget.task!.date;
+      _startTime = TimeOfDay.fromDateTime(widget.task!.startTime);
+      _endTime = TimeOfDay.fromDateTime(widget.task!.endTime);
+      _selectedColorIndex = widget.task!.colorIndex;
     } else {
       // Tạo mới: Lấy mặc định
       _titleController = TextEditingController();
@@ -56,13 +55,22 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
   @override
   Widget build(BuildContext context) {
     // Tiêu đề thay đổi tùy theo việc Tạo hay Sửa
-    final String titleText = widget.task == null ? "Thêm Việc Mới" : "Sửa Công Việc";
-    final String buttonText = widget.task == null ? "Tạo Việc Ngay" : "Lưu Thay Đổi";
+    final String titleText = widget.task == null
+        ? "Thêm Việc Mới"
+        : "Sửa Công Việc";
+    final String buttonText = widget.task == null
+        ? "Tạo Việc Ngay"
+        : "Lưu Thay Đổi";
 
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return Container(
-      padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: bottomInset + 20),
+      padding: EdgeInsets.only(
+        left: 20,
+        right: 20,
+        top: 20,
+        bottom: bottomInset + 20,
+      ),
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
@@ -73,20 +81,30 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
         children: [
           Center(
             child: Container(
-              width: 40, height: 4,
-              decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(2)),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
             ),
           ),
           const SizedBox(height: 20),
-          Text(titleText, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          
+          Text(
+            titleText,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+
           const SizedBox(height: 20),
           TextField(
             controller: _titleController,
             decoration: InputDecoration(
               hintText: "Tên công việc",
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              filled: true, fillColor: Colors.grey[100],
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              filled: true,
+              fillColor: Colors.grey[100],
             ),
           ),
           const SizedBox(height: 12),
@@ -94,8 +112,11 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
             controller: _noteController,
             decoration: InputDecoration(
               hintText: "Ghi chú thêm...",
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              filled: true, fillColor: Colors.grey[100],
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              filled: true,
+              fillColor: Colors.grey[100],
             ),
             maxLines: 2,
           ),
@@ -109,8 +130,10 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                   label: DateFormat('dd/MM/yyyy').format(_selectedDate),
                   onTap: () async {
                     final picked = await showDatePicker(
-                      context: context, initialDate: _selectedDate,
-                      firstDate: DateTime(2000), lastDate: DateTime(2100),
+                      context: context,
+                      initialDate: _selectedDate,
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
                     );
                     if (picked != null) setState(() => _selectedDate = picked);
                   },
@@ -122,7 +145,10 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                   icon: Icons.access_time,
                   label: _startTime.format(context),
                   onTap: () async {
-                    final picked = await showTimePicker(context: context, initialTime: _startTime);
+                    final picked = await showTimePicker(
+                      context: context,
+                      initialTime: _startTime,
+                    );
                     if (picked != null) setState(() => _startTime = picked);
                   },
                 ),
@@ -140,11 +166,16 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                   padding: const EdgeInsets.all(2),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: _selectedColorIndex == index ? Border.all(color: Colors.black, width: 2) : null,
+                    border: _selectedColorIndex == index
+                        ? Border.all(color: Colors.black, width: 2)
+                        : null,
                   ),
                   child: CircleAvatar(
-                    radius: 14, backgroundColor: _colors[index],
-                    child: _selectedColorIndex == index ? const Icon(Icons.check, size: 16, color: Colors.white) : null,
+                    radius: 14,
+                    backgroundColor: _colors[index],
+                    child: _selectedColorIndex == index
+                        ? const Icon(Icons.check, size: 16, color: Colors.white)
+                        : null,
                   ),
                 ),
               );
@@ -158,18 +189,28 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue[800],
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               onPressed: () {
                 if (_titleController.text.isEmpty) return;
 
                 // Xử lý Ngày Giờ
                 final startDateTime = DateTime(
-                    _selectedDate.year, _selectedDate.month, _selectedDate.day, 
-                    _startTime.hour, _startTime.minute);
+                  _selectedDate.year,
+                  _selectedDate.month,
+                  _selectedDate.day,
+                  _startTime.hour,
+                  _startTime.minute,
+                );
                 final endDateTime = DateTime(
-                    _selectedDate.year, _selectedDate.month, _selectedDate.day, 
-                    _endTime.hour, _endTime.minute);
+                  _selectedDate.year,
+                  _selectedDate.month,
+                  _selectedDate.day,
+                  _endTime.hour,
+                  _endTime.minute,
+                );
 
                 if (widget.task == null) {
                   // === TRƯỜNG HỢP 1: TẠO MỚI ===
@@ -196,7 +237,14 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
 
                 Navigator.pop(context);
               },
-              child: Text(buttonText, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+              child: Text(
+                buttonText,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
         ],
@@ -204,13 +252,20 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
     );
   }
 
-  Widget _buildDateTimePicker({required IconData icon, required String label, required VoidCallback onTap}) {
+  Widget _buildDateTimePicker({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-        decoration: BoxDecoration(border: Border.all(color: Colors.grey[300]!), borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Row(
           children: [
             Icon(icon, color: Colors.blue[800], size: 20),
