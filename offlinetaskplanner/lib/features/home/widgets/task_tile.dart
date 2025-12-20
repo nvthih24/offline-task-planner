@@ -17,45 +17,62 @@ class TaskTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accentColor = AppColors.getAccentColor(task.colorIndex);
+    final priorityColor = AppColors.getPriorityColor(task.colorIndex);
+    final isDone = task.isCompleted;
 
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: AnimatedContainer(
+        duration: const Duration(
+          milliseconds: 300,
+        ), // Hiệu ứng chuyển động mượt
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12), // Bo góc vừa phải
-          // Đổ bóng cực nhẹ tạo độ nổi tinh tế
+          color: AppColors.cardColor,
+          borderRadius: BorderRadius.circular(20), // Bo góc mềm mại
+          // Hiệu ứng bóng mờ cao cấp (Soft Shadow)
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.08),
+              color: Colors.blueGrey.withOpacity(
+                0.08,
+              ), // Bóng màu xám xanh rất nhạt
+              blurRadius: 15,
+              offset: const Offset(0, 5),
               spreadRadius: 2,
-              blurRadius: 10,
-              offset: const Offset(0, 2),
             ),
           ],
-          // Viền bên trái để phân loại mức độ ưu tiên
-          border: Border(left: BorderSide(color: accentColor, width: 4)),
+          // Viền mờ khi hoàn thành để card chìm xuống
+          border: isDone
+              ? Border.all(color: Colors.grey.withOpacity(0.1))
+              : null,
         ),
         child: Row(
           children: [
-            // 1. Checkbox cổ điển
-            Transform.scale(
-              scale: 1.1,
-              child: Checkbox(
-                value: task.isCompleted,
-                activeColor: accentColor, // Màu tick trùng màu phân loại
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
+            // 1. Checkbox cách điệu
+            GestureDetector(
+              onTap: () => onCheckboxChanged?.call(!isDone),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: 26,
+                height: 26,
+                decoration: BoxDecoration(
+                  color: isDone ? priorityColor : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: isDone ? priorityColor : Colors.grey.shade400,
+                    width: 2,
+                  ),
                 ),
-                onChanged: onCheckboxChanged,
+                child: isDone
+                    ? const Icon(Icons.check, size: 18, color: Colors.white)
+                    : null,
               ),
             ),
-            const SizedBox(width: 12),
 
-            // 2. Nội dung
+            const SizedBox(width: 16),
+
+            // 2. Nội dung chính
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,53 +81,82 @@ class TaskTile extends StatelessWidget {
                     task.title,
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: task.isCompleted
-                          ? AppColors.textSecondary
+                      fontWeight: FontWeight.w700, // Chữ đậm vừa phải
+                      color: isDone
+                          ? AppColors.textSecondary.withOpacity(0.5)
                           : AppColors.textPrimary,
-                      decoration: task.isCompleted
-                          ? TextDecoration.lineThrough
-                          : null,
+                      decoration: isDone ? TextDecoration.lineThrough : null,
+                      decorationColor: AppColors.textSecondary,
                     ),
                   ),
-                  const SizedBox(height: 4),
 
-                  // Dòng thời gian & Ghi chú
+                  if (task.note.isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      task.note,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: AppColors.textSecondary.withOpacity(0.8),
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+
+                  const SizedBox(height: 10),
+
+                  // 3. Footer: Giờ và Tag màu
                   Row(
                     children: [
-                      Icon(
-                        Icons.access_time,
-                        size: 14,
-                        color: AppColors.textSecondary,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${DateFormat('HH:mm').format(task.startTime)} - ${DateFormat('HH:mm').format(task.endTime)}',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: AppColors.textSecondary,
+                      // Badge thời gian
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
                         ),
-                      ),
-                      if (task.note.isNotEmpty) ...[
-                        const SizedBox(width: 12),
-                        const Icon(
-                          Icons.sticky_note_2_outlined,
-                          size: 14,
-                          color: AppColors.textSecondary,
+                        decoration: BoxDecoration(
+                          color: AppColors.scaffoldBackground,
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            task.note,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 13,
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.access_time_rounded,
+                              size: 14,
                               color: AppColors.textSecondary,
                             ),
-                          ),
+                            const SizedBox(width: 6),
+                            Text(
+                              '${DateFormat('HH:mm').format(task.startTime)} - ${DateFormat('HH:mm').format(task.endTime)}',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
+
+                      const Spacer(),
+
+                      // Dấu chấm phân loại màu
+                      Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          color: priorityColor,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: priorityColor.withOpacity(0.4),
+                              blurRadius: 6,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ],

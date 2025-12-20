@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+// Chú ý: Vì bạn đã đổi cấu trúc thư mục nên import phải lùi ra 3 cấp
 import '../../../core/constants/app_colors.dart';
 import '../../../data/models/task_model.dart';
-import '../logic/task_provider.dart';
+import '../../task_manager/logic/task_provider.dart';
 
 class AddTaskSheet extends StatefulWidget {
   final Task? task;
@@ -41,7 +42,6 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
       _selectedDate = DateTime.now();
       _startTime = TimeOfDay.now();
 
-      // Xử lý logic cộng giờ an toàn
       final now = DateTime.now();
       final endDateTime = now.add(const Duration(minutes: 30));
       _endTime = TimeOfDay.fromDateTime(endDateTime);
@@ -53,139 +53,167 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
   @override
   Widget build(BuildContext context) {
     final isEdit = widget.task != null;
-    // Lấy padding bàn phím
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return Container(
       padding: EdgeInsets.only(
-        left: 20,
-        right: 20,
-        top: 20,
-        bottom: bottomInset + 20, // Đẩy nội dung lên khi bàn phím hiện
+        left: 24,
+        right: 24,
+        top: 24,
+        bottom: bottomInset + 24,
       ),
       decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        color: Colors.white, // Nền trắng sạch sẽ
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(28),
+        ), // Bo góc lớn hơn chút
       ),
       child: SingleChildScrollView(
-        // Thêm cuộn để tránh lỗi overflow màn hình nhỏ
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. Thanh nắm kéo (Handle bar)
+            // 1. Thanh nắm kéo (Handle bar) - Màu nhạt hơn
             Center(
               child: Container(
-                width: 50,
-                height: 5,
+                width: 40,
+                height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
             // 2. Tiêu đề
             Text(
               isEdit ? "Cập Nhật Công Việc" : "Thêm Công Việc Mới",
-              style: TextStyle(
-                fontSize: 20,
+              style: const TextStyle(
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: AppColors.textPrimary, // Dùng màu text chính
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
             // 3. Ô nhập Tiêu đề
             _buildInputField(
               controller: _titleController,
-              hint: "Tiêu đề công việc",
-              icon: Icons.title,
+              hint: "Bạn định làm gì?",
+              icon: Icons.edit_note_rounded,
               autoFocus: true,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
             ),
             const SizedBox(height: 16),
 
             // 4. Ô nhập Ghi chú
             _buildInputField(
               controller: _noteController,
-              hint: "Ghi chú chi tiết...",
-              icon: Icons.notes,
+              hint: "Thêm ghi chú...",
+              icon: Icons.notes_rounded,
               maxLines: 3,
+              fontSize: 15,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
             // 5. Chọn Ngày & Giờ
             Row(
               children: [
                 Expanded(
-                  child: _buildDateTimePicker(
-                    label: DateFormat('dd/MM/yyyy').format(_selectedDate),
-                    icon: Icons.calendar_today_outlined,
+                  child: _buildInfoChip(
+                    label: DateFormat('d MMM').format(_selectedDate),
+                    icon: Icons.calendar_today_rounded,
                     onTap: _pickDate,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _buildDateTimePicker(
+                  child: _buildInfoChip(
                     label:
                         "${_startTime.format(context)} - ${_endTime.format(context)}",
-                    icon: Icons.access_time,
+                    icon: Icons.access_time_rounded,
                     onTap: _pickTime,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
-            // 6. Chọn Màu (Mức độ ưu tiên)
-            const Text(
+            // 6. Chọn Mức độ ưu tiên
+            Text(
               "Mức độ ưu tiên",
-              style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey),
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: AppColors.textSecondary,
+                fontSize: 14,
+              ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Wrap(
-                  spacing: 8,
+                  spacing: 12,
                   children: List.generate(4, (index) {
                     return GestureDetector(
                       onTap: () => setState(() => _selectedColorIndex = index),
-                      child: CircleAvatar(
-                        radius: 16,
-                        backgroundColor: AppColors.getAccentColor(index),
-                        child: _selectedColorIndex == index
-                            ? const Icon(
-                                Icons.check,
-                                color: Colors.white,
-                                size: 18,
-                              )
-                            : null,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.all(3),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            // Viền bao ngoài khi được chọn
+                            color: _selectedColorIndex == index
+                                ? AppColors.getPriorityColor(index)
+                                : Colors.transparent,
+                            width: 2,
+                          ),
+                        ),
+                        child: Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            // SỬA LỖI Ở ĐÂY: Dùng getPriorityColor thay vì getAccentColor
+                            color: AppColors.getPriorityColor(index),
+                            shape: BoxShape.circle,
+                          ),
+                          child: _selectedColorIndex == index
+                              ? const Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                  size: 20,
+                                )
+                              : null,
+                        ),
                       ),
                     );
                   }),
                 ),
 
-                // 7. Nút Lưu (Nằm bên phải hàng chọn màu)
-                ElevatedButton(
+                // 7. Nút Lưu (Primary Color)
+                ElevatedButton.icon(
                   onPressed: _saveTask,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 24,
-                      vertical: 12,
+                      vertical: 14,
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(14),
                     ),
                     elevation: 0,
                   ),
-                  child: Text(
+                  icon: const Icon(Icons.send_rounded, size: 20),
+                  label: Text(
                     isEdit ? "Lưu lại" : "Tạo việc",
                     style: const TextStyle(
-                      color: Colors.white,
                       fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
                   ),
                 ),
@@ -197,7 +225,7 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
     );
   }
 
-  // --- CÁC WIDGET CON (Được tách ra cho code sạch) ---
+  // --- CÁC WIDGET CON ĐÃ ĐƯỢC LÀM MỀM MẠI HƠN ---
 
   Widget _buildInputField({
     required TextEditingController controller,
@@ -205,55 +233,62 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
     required IconData icon,
     int maxLines = 1,
     bool autoFocus = false,
+    double fontSize = 14,
+    FontWeight fontWeight = FontWeight.normal,
   }) {
-    return TextField(
-      controller: controller,
-      autofocus: autoFocus,
-      maxLines: maxLines,
-      style: TextStyle(color: AppColors.textPrimary),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: const TextStyle(color: Colors.grey),
-        prefixIcon: Icon(icon, color: AppColors.primary),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.scaffoldBackground, // Nền xám nhạt
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: TextField(
+        controller: controller,
+        autofocus: autoFocus,
+        maxLines: maxLines,
+        style: TextStyle(
+          color: AppColors.textPrimary,
+          fontSize: fontSize,
+          fontWeight: fontWeight,
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: TextStyle(color: AppColors.textSecondary.withOpacity(0.5)),
+          prefixIcon: Icon(icon, color: AppColors.textSecondary),
+          border: InputBorder.none, // Bỏ viền mặc định
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 16,
+            horizontal: 16,
+          ),
         ),
-        filled: true,
-        fillColor: Colors.grey.withOpacity(0.05), // Nền xám cực nhạt
-        contentPadding: const EdgeInsets.all(16),
       ),
     );
   }
 
-  Widget _buildDateTimePicker({
+  Widget _buildInfoChip({
     required String label,
     required IconData icon,
     required VoidCallback onTap,
   }) {
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.withOpacity(0.3)),
-          borderRadius: BorderRadius.circular(12),
+          color: AppColors.scaffoldBackground,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.transparent),
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.grey, size: 20),
+            Icon(icon, color: AppColors.primary, size: 20),
             const SizedBox(width: 8),
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
-                fontSize: 13,
+                fontSize: 14,
               ),
             ),
           ],
@@ -262,7 +297,7 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
     );
   }
 
-  // --- CÁC HÀM LOGIC ---
+  // --- LOGIC GIỮ NGUYÊN NHƯ CŨ ---
 
   void _pickDate() async {
     DateTime? picked = await showDatePicker(
@@ -283,18 +318,13 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
   }
 
   void _pickTime() async {
-    // 1. Chọn giờ bắt đầu
     TimeOfDay? start = await showTimePicker(
       context: context,
       initialTime: _startTime,
     );
     if (start != null) {
       setState(() => _startTime = start);
-
-      // 2. Chọn giờ kết thúc (Optional: có thể bỏ qua nếu muốn đơn giản)
       if (mounted) {
-        // Tự động set giờ kết thúc = giờ bắt đầu + 1 tiếng (cho nhanh)
-        // Hoặc mở popup chọn tiếp nếu muốn kỹ
         setState(() {
           final now = DateTime.now();
           final dtStart = DateTime(
@@ -314,12 +344,18 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
   void _saveTask() {
     if (_titleController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Vui lòng nhập tên công việc!")),
+        SnackBar(
+          content: const Text("Đừng quên nhập tên công việc nhé!"),
+          backgroundColor: AppColors.priorityColors[2],
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
       );
       return;
     }
 
-    // Kết hợp Ngày + Giờ để ra DateTime chuẩn
     final startDateTime = DateTime(
       _selectedDate.year,
       _selectedDate.month,
@@ -337,7 +373,6 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
     );
 
     if (widget.task == null) {
-      // THÊM MỚI
       context.read<TaskProvider>().addTask(
         title: _titleController.text,
         note: _noteController.text,
@@ -347,7 +382,6 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
         colorIndex: _selectedColorIndex,
       );
     } else {
-      // SỬA
       context.read<TaskProvider>().updateTask(
         id: widget.task!.id,
         title: _titleController.text,

@@ -1,42 +1,31 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Nền chính (Trắng sứ & Xám khói)
-  static const Color background = Color(0xFFF3F4F6); // Xám rất nhạt cho nền
-  static const Color surface = Color(0xFFFFFFFF); // Trắng cho Card
+  // Nền chủ đạo: Màu kem xám nhẹ (Rất dịu mắt, không bị chói như màu trắng tinh)
+  static const Color scaffoldBackground = Color(0xFFF4F6F8);
 
-  // Màu chữ (Đen xám dịu mắt)
-  static const Color textPrimary = Color(0xFF1F2937);
-  static const Color textSecondary = Color(0xFF6B7280);
+  // Màu trắng cho các Card (Thẻ công việc)
+  static const Color cardColor = Color(0xFFFFFFFF);
 
-  // Màu chủ đạo (Indigo - Xanh cổ điển)
-  static const Color primary = Color(0xFF4F46E5);
+  // Màu chính (Primary): Xanh Navy hiện đại - tạo cảm giác ổn định, tin cậy
+  static const Color primary = Color(0xFF2563EB);
 
-  // Các màu trạng thái (Pastel nhẹ nhàng)
-  static const Color pastelBlue = Color(0xFFE0F2FE);
-  static const Color pastelRed = Color(0xFFFEE2E2);
-  static const Color pastelGreen = Color(0xFFDCFCE7);
-  static const Color pastelOrange = Color(0xFFFFEDD5);
+  // Màu chữ
+  static const Color textPrimary = Color(0xFF1E293B); // Đen than (Slate 800)
+  static const Color textSecondary = Color(0xFF64748B); // Xám xanh (Slate 500)
 
-  // Hàm lấy màu thẻ task dựa trên index
-  static Color getCardColor(int index) {
-    // Trả về màu trắng (cổ điển) hoặc màu pastel nhẹ nếu muốn phân loại
-    return surface;
-  }
+  // Màu phân loại mức độ (Pastel - Nhẹ nhàng nhưng vẫn rõ ràng)
+  static const List<Color> priorityColors = [
+    Color(0xFF3B82F6), // Blue (Bình thường)
+    Color(0xFFF59E0B), // Amber (Lưu ý)
+    Color(0xFFEF4444), // Red (Khẩn cấp)
+    Color(0xFF10B981), // Emerald (Thư giãn/Xong)
+  ];
 
-  // Hàm lấy màu điểm nhấn (vạch màu bên trái)
-  static Color getAccentColor(int index) {
-    switch (index % 4) {
-      case 0:
-        return const Color(0xFF3B82F6); // Blue
-      case 1:
-        return const Color(0xFFEF4444); // Red
-      case 2:
-        return const Color(0xFF10B981); // Green
-      case 3:
-        return const Color(0xFFF59E0B); // Orange
-      default:
-        return primary;
+  static Color getPriorityColor(int index) {
+    if (index >= 0 && index < priorityColors.length) {
+      return priorityColors[index];
     }
+    return priorityColors[0];
   }
 }

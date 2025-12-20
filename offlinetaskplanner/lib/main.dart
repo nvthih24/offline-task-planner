@@ -6,6 +6,7 @@ import 'core/constants/app_colors.dart';
 import 'data/models/task_model.dart';
 import 'features/task_manager/logic/task_provider.dart';
 import 'features/home/screens/home_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 const String taskBoxName = 'tasks';
 
@@ -34,14 +35,14 @@ class MyApp extends StatelessWidget {
       // === THIẾT LẬP THEME SÁNG TINH TẾ ===
       theme: ThemeData(
         brightness: Brightness.light,
-        scaffoldBackgroundColor: AppColors.background,
+        scaffoldBackgroundColor: AppColors.scaffoldBackground,
         primaryColor: AppColors.primary,
 
         // Font chữ sạch sẽ (Inter hoặc Roboto)
         textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
 
         appBarTheme: const AppBarTheme(
-          backgroundColor: AppColors.background,
+          backgroundColor: AppColors.scaffoldBackground,
           elevation: 0,
           scrolledUnderElevation: 0,
           iconTheme: IconThemeData(color: AppColors.textPrimary),
@@ -55,7 +56,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.primary,
-          surface: AppColors.surface,
+          background: AppColors.scaffoldBackground,
         ),
       ),
       home: const HomeScreen(),
