@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Nền chủ đạo: Màu kem xám nhẹ (Rất dịu mắt, không bị chói như màu trắng tinh)
+  // Light Mode
   static const Color scaffoldBackground = Color(0xFFF4F6F8);
-
-  // Màu trắng cho các Card (Thẻ công việc)
   static const Color cardColor = Color(0xFFFFFFFF);
-
-  // Màu chính (Primary): Xanh Navy hiện đại - tạo cảm giác ổn định, tin cậy
-  static const Color primary = Color(0xFF2563EB);
-
-  // Màu chữ
   static const Color textPrimary = Color(0xFF1E293B); // Đen than (Slate 800)
   static const Color textSecondary = Color(0xFF64748B); // Xám xanh (Slate 500)
+
+// Dark Mode
+  static const Color scaffoldDark = Color(0xFF0F172A); // Màu nền tối (Xanh đen)
+  static const Color cardDark = Color(0xFF1E293B); // Màu thẻ tối
+  static const Color textPrimaryDark = Color(0xFFF1F5F9); // Chữ trắng sáng
+  static const Color textSecondaryDark = Color(0xFF94A3B8); // Chữ xám sáng
+
+  static const Color primary = Color(0xFF2563EB);
 
   // Màu phân loại mức độ (Pastel - Nhẹ nhàng nhưng vẫn rõ ràng)
   static const List<Color> priorityColors = [

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-// Chú ý: Vì bạn đã đổi cấu trúc thư mục nên import phải lùi ra 3 cấp
 import '../../../core/constants/app_colors.dart';
 import '../../../data/models/task_model.dart';
 import '../../task_manager/logic/task_provider.dart';
@@ -55,31 +54,34 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
     final isEdit = widget.task != null;
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
+    // --- LẤY MÀU ĐỘNG TỪ THEME ---
+    final theme = Theme.of(context);
+    final cardColor = theme.cardColor; // Nền chính của Sheet
+    final inputBgColor =
+        theme.scaffoldBackgroundColor; // Nền của ô input (Tương phản)
+    final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black;
+    final hintColor = theme.textTheme.bodyMedium?.color?.withOpacity(0.5);
+
     return Container(
       padding: EdgeInsets.only(
-        left: 24,
-        right: 24,
-        top: 24,
-        bottom: bottomInset + 24,
-      ),
-      decoration: const BoxDecoration(
-        color: Colors.white, // Nền trắng sạch sẽ
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(28),
-        ), // Bo góc lớn hơn chút
+          left: 24, right: 24, top: 24, bottom: bottomInset + 24),
+      decoration: BoxDecoration(
+        color: cardColor, // SỬA: Nền động
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. Thanh nắm kéo (Handle bar) - Màu nhạt hơn
+            // 1. Thanh nắm kéo (Handle bar)
             Center(
               child: Container(
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: Colors.grey
+                      .withOpacity(0.3), // Màu trung tính cho cả 2 mode
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
@@ -89,10 +91,10 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
             // 2. Tiêu đề
             Text(
               isEdit ? "Cập Nhật Công Việc" : "Thêm Công Việc Mới",
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary, // Dùng màu text chính
+                color: textColor, // SỬA: Màu chữ động
               ),
             ),
             const SizedBox(height: 24),
@@ -105,6 +107,9 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
               autoFocus: true,
               fontSize: 18,
               fontWeight: FontWeight.w600,
+              bgColor: inputBgColor, // Truyền màu
+              textColor: textColor,
+              hintColor: hintColor,
             ),
             const SizedBox(height: 16),
 
@@ -115,6 +120,9 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
               icon: Icons.notes_rounded,
               maxLines: 3,
               fontSize: 15,
+              bgColor: inputBgColor,
+              textColor: textColor,
+              hintColor: hintColor,
             ),
             const SizedBox(height: 24),
 
@@ -126,6 +134,8 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                     label: DateFormat('d MMM').format(_selectedDate),
                     icon: Icons.calendar_today_rounded,
                     onTap: _pickDate,
+                    bgColor: inputBgColor,
+                    textColor: textColor,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -135,6 +145,8 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                         "${_startTime.format(context)} - ${_endTime.format(context)}",
                     icon: Icons.access_time_rounded,
                     onTap: _pickTime,
+                    bgColor: inputBgColor,
+                    textColor: textColor,
                   ),
                 ),
               ],
@@ -145,10 +157,7 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
             Text(
               "Mức độ ưu tiên",
               style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: AppColors.textSecondary,
-                fontSize: 14,
-              ),
+                  fontWeight: FontWeight.w600, color: hintColor, fontSize: 14),
             ),
             const SizedBox(height: 12),
             Row(
@@ -165,27 +174,21 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            // Viền bao ngoài khi được chọn
-                            color: _selectedColorIndex == index
-                                ? AppColors.getPriorityColor(index)
-                                : Colors.transparent,
-                            width: 2,
-                          ),
+                              color: _selectedColorIndex == index
+                                  ? AppColors.getPriorityColor(index)
+                                  : Colors.transparent,
+                              width: 2),
                         ),
                         child: Container(
                           width: 32,
                           height: 32,
                           decoration: BoxDecoration(
-                            // SỬA LỖI Ở ĐÂY: Dùng getPriorityColor thay vì getAccentColor
                             color: AppColors.getPriorityColor(index),
                             shape: BoxShape.circle,
                           ),
                           child: _selectedColorIndex == index
-                              ? const Icon(
-                                  Icons.check,
-                                  color: Colors.white,
-                                  size: 20,
-                                )
+                              ? const Icon(Icons.check,
+                                  color: Colors.white, size: 20)
                               : null,
                         ),
                       ),
@@ -193,16 +196,14 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                   }),
                 ),
 
-                // 7. Nút Lưu (Primary Color)
+                // 7. Nút Lưu
                 ElevatedButton.icon(
                   onPressed: _saveTask,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 14,
-                    ),
+                        horizontal: 24, vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
@@ -212,9 +213,7 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                   label: Text(
                     isEdit ? "Lưu lại" : "Tạo việc",
                     style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                        fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                 ),
               ],
@@ -225,12 +224,14 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
     );
   }
 
-  // --- CÁC WIDGET CON ĐÃ ĐƯỢC LÀM MỀM MẠI HƠN ---
-
+  // Widget con: Ô nhập liệu (Đã tùy biến màu sắc)
   Widget _buildInputField({
     required TextEditingController controller,
     required String hint,
     required IconData icon,
+    required Color bgColor,
+    required Color textColor,
+    Color? hintColor,
     int maxLines = 1,
     bool autoFocus = false,
     double fontSize = 14,
@@ -238,7 +239,7 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.scaffoldBackground, // Nền xám nhạt
+        color: bgColor, // Màu nền ô nhập liệu (khác với nền sheet)
         borderRadius: BorderRadius.circular(16),
       ),
       child: TextField(
@@ -246,35 +247,34 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
         autofocus: autoFocus,
         maxLines: maxLines,
         style: TextStyle(
-          color: AppColors.textPrimary,
-          fontSize: fontSize,
-          fontWeight: fontWeight,
-        ),
+            color: textColor, fontSize: fontSize, fontWeight: fontWeight),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: TextStyle(color: AppColors.textSecondary.withOpacity(0.5)),
-          prefixIcon: Icon(icon, color: AppColors.textSecondary),
-          border: InputBorder.none, // Bỏ viền mặc định
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 16,
-          ),
+          hintStyle: TextStyle(color: hintColor),
+          prefixIcon: Icon(icon, color: hintColor),
+          border: InputBorder.none,
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         ),
       ),
     );
   }
 
+  // Widget con: Chip thông tin (Ngày/Giờ)
   Widget _buildInfoChip({
     required String label,
     required IconData icon,
     required VoidCallback onTap,
+    required Color bgColor,
+    required Color textColor,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        // 1. Giảm padding ngang từ 16 xuống 12 để tiết kiệm diện tích
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
         decoration: BoxDecoration(
-          color: AppColors.scaffoldBackground,
+          color: bgColor,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: Colors.transparent),
         ),
@@ -282,13 +282,20 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, color: AppColors.primary, size: 20),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-                fontSize: 14,
+            const SizedBox(width: 6), // Giảm khoảng cách icon và chữ
+
+            // 2. Bọc Text trong Flexible để nó biết tự co lại
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: textColor,
+                    fontSize:
+                        13 // 3. Giảm size chữ chút xíu (14 -> 13) cho an toàn
+                    ),
+                overflow: TextOverflow.ellipsis, // Cắt bớt nếu dài quá
+                maxLines: 1, // Chỉ hiện 1 dòng
               ),
             ),
           ],
@@ -297,43 +304,27 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
     );
   }
 
-  // --- LOGIC GIỮ NGUYÊN NHƯ CŨ ---
-
   void _pickDate() async {
+    // Không dùng builder ép theme nữa để nó tự động theo App Theme
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(primary: AppColors.primary),
-          ),
-          child: child!,
-        );
-      },
     );
     if (picked != null) setState(() => _selectedDate = picked);
   }
 
   void _pickTime() async {
-    TimeOfDay? start = await showTimePicker(
-      context: context,
-      initialTime: _startTime,
-    );
+    TimeOfDay? start =
+        await showTimePicker(context: context, initialTime: _startTime);
     if (start != null) {
       setState(() => _startTime = start);
       if (mounted) {
         setState(() {
           final now = DateTime.now();
-          final dtStart = DateTime(
-            now.year,
-            now.month,
-            now.day,
-            start.hour,
-            start.minute,
-          );
+          final dtStart =
+              DateTime(now.year, now.month, now.day, start.hour, start.minute);
           final dtEnd = dtStart.add(const Duration(hours: 1));
           _endTime = TimeOfDay.fromDateTime(dtEnd);
         });
@@ -348,9 +339,8 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
           content: const Text("Đừng quên nhập tên công việc nhé!"),
           backgroundColor: AppColors.priorityColors[2],
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
       );
       return;
@@ -374,23 +364,23 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
 
     if (widget.task == null) {
       context.read<TaskProvider>().addTask(
-        title: _titleController.text,
-        note: _noteController.text,
-        date: _selectedDate,
-        startTime: startDateTime,
-        endTime: endDateTime,
-        colorIndex: _selectedColorIndex,
-      );
+            title: _titleController.text,
+            note: _noteController.text,
+            date: _selectedDate,
+            startTime: startDateTime,
+            endTime: endDateTime,
+            colorIndex: _selectedColorIndex,
+          );
     } else {
       context.read<TaskProvider>().updateTask(
-        id: widget.task!.id,
-        title: _titleController.text,
-        note: _noteController.text,
-        date: _selectedDate,
-        startTime: startDateTime,
-        endTime: endDateTime,
-        colorIndex: _selectedColorIndex,
-      );
+            id: widget.task!.id,
+            title: _titleController.text,
+            note: _noteController.text,
+            date: _selectedDate,
+            startTime: startDateTime,
+            endTime: endDateTime,
+            colorIndex: _selectedColorIndex,
+          );
     }
 
     Navigator.pop(context);

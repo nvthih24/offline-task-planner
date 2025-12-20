@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../data/models/task_model.dart';
 import '../../task_manager/logic/task_provider.dart';
 import '../../task_manager/widgets/add_task_sheet.dart';
 import '../widgets/task_tile.dart';
@@ -24,10 +23,14 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scaffoldBg = Theme.of(context).scaffoldBackgroundColor;
+    final cardColor = Theme.of(context).cardColor;
+    final hintColor =
+        Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5);
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: scaffoldBg,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: cardColor,
         elevation: 1,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
@@ -36,16 +39,25 @@ class _SearchScreenState extends State<SearchScreen> {
             Navigator.pop(context);
           },
         ),
-
         title: TextField(
           controller: _controller,
           autofocus: true,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             hintText: 'Tìm công việc...',
             border: InputBorder.none,
+            suffixIcon: _controller.text.isNotEmpty
+                ? IconButton(
+                    icon: Icon(Icons.clear, color: hintColor),
+                    onPressed: () {
+                      _controller.clear();
+                      context.read<TaskProvider>().setSearchQuery('');
+                    },
+                  )
+                : null,
           ),
           onChanged: (value) {
             context.read<TaskProvider>().setSearchQuery(value);
+            setState(() {});
           },
         ),
       ),
@@ -54,10 +66,17 @@ class _SearchScreenState extends State<SearchScreen> {
           final tasks = provider.tasks;
 
           if (tasks.isEmpty) {
-            return const Center(
-              child: Text(
-                'Không tìm thấy công việc phù hợp',
-                style: TextStyle(color: Colors.grey),
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.search_off_rounded, size: 60, color: hintColor),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Không tìm thấy công việc phù hợp',
+                    style: TextStyle(color: hintColor, fontSize: 16),
+                  ),
+                ],
               ),
             );
           }

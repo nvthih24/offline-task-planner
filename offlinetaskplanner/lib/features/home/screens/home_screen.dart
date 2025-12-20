@@ -3,12 +3,12 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../data/models/task_model.dart';
 import '../../task_manager/logic/task_provider.dart';
 import '../../task_manager/widgets/add_task_sheet.dart';
 import '../widgets/task_tile.dart';
 import 'search_screen.dart';
-import '../widgets/statistics_card.dart'; // Đảm bảo import đúng
+import '../widgets/statistics_card.dart';
+import '../../task_manager/logic/theme_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,9 +20,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+// Lấy trạng thái Dark Mode
+    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    // Lấy màu chữ phụ động theo Theme
+    final textSecondaryColor =
+        Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7);
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
-
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       // Nút thêm việc (FAB)
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 20, right: 10),
@@ -68,11 +72,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                 "Chào bạn,",
                                 style: TextStyle(
                                     fontSize: 16,
-                                    color: AppColors.textSecondary,
+                                    color: textSecondaryColor,
                                     fontWeight: FontWeight.w600),
                               ),
                               const SizedBox(height: 4),
@@ -81,22 +85,48 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ? "Bạn có $activeTasks việc cần làm"
                                     : "Mọi việc đã hoàn tất! 🎉",
                                 style: const TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.textPrimary),
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ],
+                          ),
+                        ),
+
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context)
+                                .cardColor, // Màu nền nút tự đổi
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4))
+                            ],
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              context.read<ThemeProvider>().toggleTheme();
+                            },
+                            // Icon đổi hình Mặt trăng / Mặt trời
+                            icon: Icon(
+                              isDark
+                                  ? Icons.wb_sunny_rounded
+                                  : Icons.nightlight_round,
+                              color: isDark ? Colors.yellow : AppColors.primary,
+                            ),
                           ),
                         ),
                         // Nút tìm kiếm (Giả lập)
                         Container(
                           margin: const EdgeInsets.only(right: 12),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Theme.of(context).cardColor,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                  color: Colors.grey.withOpacity(0.1),
+                                  color: Colors.grey.withOpacity(0.05),
                                   blurRadius: 10,
                                   offset: const Offset(0, 4))
                             ],
@@ -121,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
@@ -141,10 +171,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   DateFormat('MMM')
                                       .format(DateTime.now())
                                       .toUpperCase(),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
-                                      color: AppColors.textSecondary)),
+                                      color: textSecondaryColor)),
                             ],
                           ),
                         )

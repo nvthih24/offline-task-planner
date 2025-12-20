@@ -24,6 +24,11 @@ class TaskTile extends StatelessWidget {
     final priorityColor = AppColors.getPriorityColor(task.colorIndex);
     final isDone = task.isCompleted;
 
+    final Color cardColor = Theme.of(context).cardColor;
+    final Color textColor = Theme.of(context).textTheme.bodyLarge!.color!;
+    final Color subTextColor =
+        Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(0.7);
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -33,7 +38,7 @@ class TaskTile extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.cardColor,
+          color: cardColor,
           borderRadius: BorderRadius.circular(20), // Bo góc mềm mại
           // Hiệu ứng bóng mờ cao cấp (Soft Shadow)
           boxShadow: [
@@ -47,9 +52,8 @@ class TaskTile extends StatelessWidget {
             ),
           ],
           // Viền mờ khi hoàn thành để card chìm xuống
-          border: isDone
-              ? Border.all(color: Colors.grey.withOpacity(0.1))
-              : null,
+          border:
+              isDone ? Border.all(color: Colors.grey.withOpacity(0.1)) : null,
         ),
         child: Row(
           children: [
@@ -88,9 +92,7 @@ class TaskTile extends StatelessWidget {
                     normalStyle: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
-                      color: isDone
-                          ? AppColors.textSecondary.withOpacity(0.5)
-                          : AppColors.textPrimary,
+                      color: isDone ? subTextColor.withOpacity(0.5) : textColor,
                       decoration: isDone ? TextDecoration.lineThrough : null,
                       decorationColor: AppColors.textSecondary,
                     ),
@@ -107,7 +109,8 @@ class TaskTile extends StatelessWidget {
                       query: searchQuery,
                       normalStyle: TextStyle(
                         fontSize: 13,
-                        color: AppColors.textSecondary.withOpacity(0.8),
+                        color:
+                            isDone ? subTextColor.withOpacity(0.5) : textColor,
                         height: 1.4,
                       ),
                       highlightStyle: const TextStyle(
@@ -129,23 +132,23 @@ class TaskTile extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.scaffoldBackground,
+                          color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.access_time_rounded,
                               size: 14,
-                              color: AppColors.textSecondary,
+                              color: subTextColor,
                             ),
                             const SizedBox(width: 6),
                             Text(
                               '${DateFormat('HH:mm').format(task.startTime)} - ${DateFormat('HH:mm').format(task.endTime)}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.textSecondary,
+                                color: subTextColor,
                               ),
                             ),
                           ],
