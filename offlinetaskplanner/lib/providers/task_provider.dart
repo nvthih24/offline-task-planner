@@ -5,8 +5,8 @@ import '../data/models/task_model.dart'; // Đảm bảo đường dẫn import 
 
 class TaskProvider extends ChangeNotifier {
   // Tên box phải trùng với tên trong main.dart
-  static const String _boxName = 'tasks'; 
-  
+  static const String _boxName = 'tasks';
+
   List<Task> _tasks = [];
   List<Task> get tasks => _tasks;
 
@@ -55,9 +55,7 @@ class TaskProvider extends ChangeNotifier {
   // === CHIÊU 2: XÓA (DELETE) ===
   Future<void> deleteTask(String id) async {
     // Tìm task trong box để xóa
-    final taskToDelete = _box.values.firstWhere(
-      (element) => element.id == id,
-    );
+    final taskToDelete = _box.values.firstWhere((element) => element.id == id);
     await taskToDelete.delete();
     getTasks();
   }
