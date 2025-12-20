@@ -164,7 +164,6 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                 if (_titleController.text.isEmpty) return;
 
                 // Xử lý Ngày Giờ
-                final now = DateTime.now();
                 final startDateTime = DateTime(
                     _selectedDate.year, _selectedDate.month, _selectedDate.day, 
                     _startTime.hour, _startTime.minute);

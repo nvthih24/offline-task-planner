@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Icon(Icons.assignment_add, size: 80, color: Colors.grey[300]),
                   const SizedBox(height: 16),
-                  Text("Hoàng thượng chưa có chỉ dụ nào!",
+                  Text("Bạn chưa có công việc nào!",
                       style: TextStyle(color: Colors.grey[500], fontSize: 16)),
                 ],
               ),
@@ -86,7 +86,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildTaskItem(BuildContext context, Task task, TaskProvider provider) {
-    // Dùng DateFormat từ package intl để format ngày tháng
     String formattedDate = DateFormat('dd/MM HH:mm').format(task.date);
 
     return Padding(
@@ -94,16 +93,13 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Slidable(
         key: ValueKey(task.id),
 
-        // === THAY ĐỔI CHÍNH TẠI ĐÂY ===
-        // 1. startActionPane: VUỐT TỪ TRÁI SANG PHẢI (->)
-        // Gom cả nút Sửa và Xóa vào đây
+        // 1. startActionPane: VUỐT SANG PHẢI (->) ĐỂ SỬA
         startActionPane: ActionPane(
           motion: const ScrollMotion(),
-          extentRatio: 0.5, // Chiếm 50% chiều rộng để đủ chỗ cho 2 nút
           children: [
-             // NÚT SỬA (Màu Xanh)
              SlidableAction(
               onPressed: (context) {
+                // Gọi bảng nhập liệu để sửa
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
@@ -115,28 +111,31 @@ class _HomeScreenState extends State<HomeScreen> {
               foregroundColor: Colors.white,
               icon: Icons.edit,
               label: 'Sửa',
-              // Bo góc trái cho đẹp
-              borderRadius: const BorderRadius.horizontal(left: Radius.circular(12)),
+              // Bo góc trái
+              borderRadius: BorderRadius.circular(12),
             ),
+          ],
+        ),
 
-            // NÚT XÓA (Màu Đỏ)
+        // 2. endActionPane: VUỐT SANG TRÁI (<-) ĐỂ XÓA
+        endActionPane: ActionPane(
+          motion: const ScrollMotion(),
+          children: [
             SlidableAction(
               onPressed: (context) {
                 provider.deleteTask(task.id);
                 ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Đã trảm công việc!"), duration: Duration(seconds: 1)));
+                    const SnackBar(content: Text("Đã xóa công việc!"), duration: Duration(seconds: 1)));
               },
               backgroundColor: Colors.redAccent,
               foregroundColor: Colors.white,
               icon: Icons.delete,
               label: 'Xóa',
-              // Không cần bo góc bên phải vì nó nằm giữa card và mép màn hình khi vuốt
+              // Bo góc phải
+              borderRadius: BorderRadius.circular(12),
             ),
           ],
         ),
-
-        // 2. endActionPane: BỎ TRỐNG (Không vuốt từ phải sang trái nữa)
-        endActionPane: null,
 
         // === NỘI DUNG CARD (GIỮ NGUYÊN) ===
         child: Container(
