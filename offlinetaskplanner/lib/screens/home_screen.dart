@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+// Giữ nguyên các đường dẫn import theo đúng cấu trúc GitHub của Người
 import '../data/models/task_model.dart';
 import '../providers/task_provider.dart';
 import '../widgets/add_task_sheet.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -16,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100], // Màu nền nhẹ nhàng
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,7 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, taskProvider, child) {
           final tasks = taskProvider.tasks;
 
-          // 1. Nếu không có công việc nào (Empty State)
           if (tasks.isEmpty) {
             return Center(
               child: Column(
@@ -57,7 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           }
 
-          // 2. Danh sách công việc
           return ListView.builder(
             padding: const EdgeInsets.all(16),
             itemCount: tasks.length,
@@ -68,13 +68,11 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
       ),
-      // Nút tròn thêm việc (Floating Action Button)
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // HIỆN BẢNG NHẬP LIỆU
           showModalBottomSheet(
             context: context,
-            isScrollControlled: true, // Cho phép full chiều cao khi có phím
+            isScrollControlled: true,
             backgroundColor: Colors.transparent,
             builder: (context) => const AddTaskSheet(),
           );
@@ -87,59 +85,60 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Widget con: Một dòng công việc
   Widget _buildTaskItem(BuildContext context, Task task, TaskProvider provider) {
-    // Định dạng ngày giờ: Ví dụ 20/12/2025 08:30
+    // Dùng DateFormat từ package intl để format ngày tháng
     String formattedDate = DateFormat('dd/MM HH:mm').format(task.date);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Slidable(
         key: ValueKey(task.id),
-        
-        // VUỐT TRÁI: XÓA (Delete)
-        endActionPane: ActionPane(
-          motion: const ScrollMotion(),
-          children: [
-            SlidableAction(
-              onPressed: (context) {
-                provider.deleteTask(task.id);
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Đã xóa công việc!"), duration: Duration(seconds: 1)));
-              },
-              backgroundColor: Colors.redAccent,
-              foregroundColor: Colors.white,
-              icon: Icons.delete,
-              label: 'Xóa',
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ],
-        ),
 
-        // VUỐT PHẢI: SỬA (Edit) - Hoặc có thể thêm Archive
+        // === THAY ĐỔI CHÍNH TẠI ĐÂY ===
+        // 1. startActionPane: VUỐT TỪ TRÁI SANG PHẢI (->)
+        // Gom cả nút Sửa và Xóa vào đây
         startActionPane: ActionPane(
           motion: const ScrollMotion(),
+          extentRatio: 0.5, // Chiếm 50% chiều rộng để đủ chỗ cho 2 nút
           children: [
+             // NÚT SỬA (Màu Xanh)
              SlidableAction(
               onPressed: (context) {
-                // <--- THAY ĐỔI Ở ĐÂY: Gọi bảng nhập liệu và truyền task vào
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
                   backgroundColor: Colors.transparent,
-                  builder: (context) => AddTaskSheet(task: task), // Truyền task cũ vào để sửa
+                  builder: (context) => AddTaskSheet(task: task),
                 );
               },
               backgroundColor: Colors.blueAccent,
               foregroundColor: Colors.white,
               icon: Icons.edit,
               label: 'Sửa',
-               borderRadius: BorderRadius.circular(12),
+              // Bo góc trái cho đẹp
+              borderRadius: const BorderRadius.horizontal(left: Radius.circular(12)),
+            ),
+
+            // NÚT XÓA (Màu Đỏ)
+            SlidableAction(
+              onPressed: (context) {
+                provider.deleteTask(task.id);
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Đã trảm công việc!"), duration: Duration(seconds: 1)));
+              },
+              backgroundColor: Colors.redAccent,
+              foregroundColor: Colors.white,
+              icon: Icons.delete,
+              label: 'Xóa',
+              // Không cần bo góc bên phải vì nó nằm giữa card và mép màn hình khi vuốt
             ),
           ],
         ),
 
-        // NỘI DUNG CHÍNH (Card)
+        // 2. endActionPane: BỎ TRỐNG (Không vuốt từ phải sang trái nữa)
+        endActionPane: null,
+
+        // === NỘI DUNG CARD (GIỮ NGUYÊN) ===
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -151,7 +150,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 offset: const Offset(0, 4),
               ),
             ],
-            // Viền trái thể hiện mức độ quan trọng (Color Index)
             border: Border(
               left: BorderSide(
                 color: _getPriorityColor(task.colorIndex), 
@@ -161,7 +159,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            // Checkbox hoàn thành
             leading: Checkbox(
               value: task.isCompleted,
               activeColor: _getPriorityColor(task.colorIndex),
@@ -170,7 +167,6 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             ),
-            // Tên công việc
             title: Text(
               task.title,
               style: TextStyle(
@@ -180,7 +176,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: task.isCompleted ? Colors.grey : Colors.black87,
               ),
             ),
-            // Ghi chú & Giờ
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -210,13 +205,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Hàm phụ: Lấy màu theo index
   Color _getPriorityColor(int index) {
     switch (index) {
-      case 0: return Colors.blue;       // Bình thường
-      case 1: return Colors.orange;     // Quan trọng
-      case 2: return Colors.red;        // Khẩn cấp
-      case 3: return Colors.green;      // Nhẹ nhàng
+      case 0: return Colors.blue;
+      case 1: return Colors.orange;
+      case 2: return Colors.red;
+      case 3: return Colors.green;
       default: return Colors.blue;
     }
   }
