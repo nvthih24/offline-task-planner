@@ -122,7 +122,13 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
              SlidableAction(
               onPressed: (context) {
-                // Gọi hàm sửa (sẽ làm sau)
+                // <--- THAY ĐỔI Ở ĐÂY: Gọi bảng nhập liệu và truyền task vào
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) => AddTaskSheet(task: task), // Truyền task cũ vào để sửa
+                );
               },
               backgroundColor: Colors.blueAccent,
               foregroundColor: Colors.white,
