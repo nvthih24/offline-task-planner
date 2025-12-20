@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'data/models/task_model.dart'; // Import model vừa tạo
+import 'package:provider/provider.dart'; // Import thêm Provider
+import 'data/models/task_model.dart';
+import 'providers/task_provider.dart'; // Import file provider vừa tạo
 
-// Đặt tên cho cái hộp chứa dữ liệu
 const String taskBoxName = 'tasks';
 
 void main() async {
-  // 1. Khởi tạo Hive
   await Hive.initFlutter();
-
-  // 2. Đăng ký Adapter (để Hive hiểu được class Task của bạn)
   Hive.registerAdapter(TaskAdapter());
-
-  // 3. Mở hộp dữ liệu (Load dữ liệu từ ổ cứng lên RAM)
   await Hive.openBox<Task>(taskBoxName);
 
   runApp(const MyApp());
@@ -23,15 +19,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false, // Tắt chữ Debug góc phải
-      title: 'Offline Task Planner',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        useMaterial3: true, // Dùng giao diện Material 3 mới nhất
-      ),
-      home: const Scaffold(
-        body: Center(child: Text("Setup xong Hive rồi nhé!")),
+    // Dùng MultiProvider để bọc toàn bộ app
+    return MultiProvider(
+      providers: [
+        // Khởi tạo TaskProvider và gọi luôn hàm getTasks() để load dữ liệu ngay khi mở app
+        ChangeNotifierProvider(create: (_) => TaskProvider()..getTasks()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Offline Task Planner',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          useMaterial3: true,
+        ),
+        // Thay vì hiển thị Text, ta sẽ trỏ tới HomeScreen (sẽ làm ở bước sau)
+        home: const Scaffold(
+          body: Center(
+            child: Text("Đã gắn TaskProvider thành công!\nSẵn sàng làm giao diện."),
+          ),
+        ),
       ),
     );
   }
