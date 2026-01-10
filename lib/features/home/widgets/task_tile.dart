@@ -6,11 +6,14 @@ import '../../../core/constants/app_colors.dart';
 import '../../../data/models/task_model.dart';
 import '../../task_manager/logic/task_provider.dart';
 import 'highlight_text.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class TaskTile extends StatelessWidget {
   final Task task;
   final VoidCallback? onTap;
   final Function(bool?)? onCheckboxChanged;
+
+  static final AudioPlayer _audioPlayer = AudioPlayer();
 
   const TaskTile({
     super.key,
@@ -81,7 +84,16 @@ class TaskTile extends StatelessWidget {
               children: [
                 // Checkbox
                 GestureDetector(
-                  onTap: () => onCheckboxChanged?.call(!isDone),
+                  onTap: () {
+                    onCheckboxChanged?.call(!isDone);
+                    if (!isDone) {
+                      try {
+                        _audioPlayer.play(AssetSource('sounds/ting.mp3'));
+                      } catch (e) {
+                        print("Lỗi phát nhạc: $e");
+                      }
+                    }
+                  },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     width: 26,

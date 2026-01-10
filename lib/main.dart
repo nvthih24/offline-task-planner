@@ -7,6 +7,7 @@ import 'data/models/task_model.dart';
 import 'features/task_manager/logic/task_provider.dart';
 import 'features/task_manager/logic/theme_provider.dart';
 import 'features/home/screens/pages.dart';
+import 'core/services/notification_service.dart';
 
 const String taskBoxName = 'tasks';
 
@@ -16,6 +17,12 @@ void main() async {
   Hive.registerAdapter(TaskAdapter());
   await Hive.openBox<Task>(taskBoxName);
   await Hive.openBox('settings');
+
+  try {
+    await NotificationService().init();
+  } catch (e) {
+    debugPrint('Lỗi khởi tạo NotificationService: $e');
+  }
 
   runApp(
     MultiProvider(
