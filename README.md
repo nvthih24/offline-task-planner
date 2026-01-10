@@ -9,22 +9,26 @@ A **Soft Minimalist** To-Do List application built with Flutter. Designed to hel
 ## ✨ Features
 
 ### 📅 Task Management
+
 - **Smart Organization:** Create, edit, and delete tasks with ease.
 - **Gesture Actions:** Swipe left to delete tasks with smooth morphing animations.
 - **Filtering:** Filter tasks by Date, Status (Complete/Incomplete), and Priority.
 - **Search:** Real-time search functionality.
 
 ### 🍅 Focus Mode (Pomodoro)
+
 - **Countdown Timer:** Circular visual timer to track your focus sessions.
 - **Background Sounds:** Integrated White Noise player (Rain, Lofi, etc.) to boost concentration.
 - **Customizable:** Adjust focus duration (15m, 25m, 60m...).
 
 ### 🎮 Gamification & Stats
+
 - **Leveling System:** Earn XP for every completed task. Level up from "Novice" to "Master".
 - **Daily Streak:** Keep the fire burning! Track your consecutive days of productivity.
 - **Statistics:** Visualize your progress with beautiful charts and progress bars.
 
 ### 🎨 UI/UX
+
 - **Soft Minimalist Design:** Clean, distraction-free interface using `Google Nav Bar`.
 - **Dark/Light Mode:** Automatically adapts to system theme.
 - **Responsive:** Optimized for various screen sizes (including keyboard handling).
@@ -33,8 +37,8 @@ A **Soft Minimalist** To-Do List application built with Flutter. Designed to hel
 
 ## 📸 Screenshots
 
-| Home Screen | Focus Mode | Statistics & Gamification |
-|:---:|:---:|:---:|
+|                 Home Screen                  |                  Focus Mode                   |           Statistics & Gamification           |
+| :------------------------------------------: | :-------------------------------------------: | :-------------------------------------------: |
 | <img src="screenshots/home.png" width="250"> | <img src="screenshots/focus.png" width="250"> | <img src="screenshots/stats.png" width="250"> |
 
 ---
@@ -102,27 +106,39 @@ The project follows the **Clean Architecture** principle, separated by features:
 └── 📄 main.dart
 
 ```
+
 ---
+
 ## 🚀 Getting Started
 
 To run this project locally, follow these steps:
 
 - Clone the repository
+
 ```text
-git clone [https://github.com/nvthih24/offline-task-planner.git](https://github.com/nvthih24/offline-task-planner.git)
+git clone https://github.com/nvthih24/offline-task-planner.git (https://github.com/nvthih24/offline-task-planner.git)
 ```
+
 - Install dependencies
+
 ```text
 flutter pub get
 ```
+
 - Setup Assets
+
 ```text
-assets/
-  └── sounds/
-      ├── rain.mp3
-      └── lofi.mp3
+📁 assets/
+├── 📁 images
+├── 📁 sounds
+│   ├── 🎵 chill-lofi-347217.mp3
+│   ├── 🎵 lofi-chill-372954.mp3
+│   └── 🎵 tieng_troi_mua_lon-www_tiengdong_com.mp3
+└── 🖼️ icon.png
 ```
+
 - Run the app
+
 ```text
 flutter run
 ```
