@@ -5,8 +5,8 @@ import 'package:google_fonts/google_fonts.dart'; // Import font
 import 'core/constants/app_colors.dart';
 import 'data/models/task_model.dart';
 import 'features/task_manager/logic/task_provider.dart';
-import 'features/home/screens/home_screen.dart';
 import 'features/task_manager/logic/theme_provider.dart';
+import 'features/home/screens/pages.dart';
 
 const String taskBoxName = 'tasks';
 
@@ -33,7 +33,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = context.watch<ThemeProvider>();
     final isDark = context.watch<ThemeProvider>().isDarkMode;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -88,7 +87,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const HomeScreen(),
+      home: const Pages(),
     );
   }
 }

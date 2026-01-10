@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
 import '../../../core/constants/app_colors.dart';
+
 import '../../task_manager/logic/task_provider.dart';
 import '../../task_manager/widgets/add_task_sheet.dart';
+
 import '../widgets/task_tile.dart';
+import '../widgets/filter_chips.dart';
+
 import 'search_screen.dart';
-import '../widgets/statistics_card.dart';
-import '../../task_manager/logic/theme_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,35 +23,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-// Lấy trạng thái Dark Mode
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
     // Lấy màu chữ phụ động theo Theme
     final textSecondaryColor =
         Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7);
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       // Nút thêm việc (FAB)
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 20, right: 10),
-        child: FloatingActionButton.extended(
-          onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              backgroundColor: Colors.transparent,
-              builder: (context) => const AddTaskSheet(),
-            );
-          },
-          backgroundColor: AppColors.primary,
-          elevation: 4,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          icon: const Icon(Icons.add_rounded, color: Colors.white, size: 28),
-          label: const Text("Thêm Việc",
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        ),
-      ),
 
       body: SafeArea(
         bottom: false,
@@ -93,31 +73,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
 
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context)
-                                .cardColor, // Màu nền nút tự đổi
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4))
-                            ],
-                          ),
-                          child: IconButton(
-                            onPressed: () {
-                              context.read<ThemeProvider>().toggleTheme();
-                            },
-                            // Icon đổi hình Mặt trăng / Mặt trời
-                            icon: Icon(
-                              isDark
-                                  ? Icons.wb_sunny_rounded
-                                  : Icons.nightlight_round,
-                              color: isDark ? Colors.yellow : AppColors.primary,
-                            ),
-                          ),
-                        ),
                         // Nút tìm kiếm (Giả lập)
                         Container(
                           margin: const EdgeInsets.only(right: 12),
@@ -147,6 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             tooltip: 'Tìm kiếm',
                           ),
                         ),
+
                         // Box Ngày tháng
                         Container(
                           padding: const EdgeInsets.all(12),
@@ -183,15 +139,40 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-                // 2. BIỂU ĐỒ (Bọc trong SliverToBoxAdapter)
+                // --- 2. BỘ LỌC TAG (SCROLL NGANG) ---
                 SliverToBoxAdapter(
-                  child: StatisticsCard(
-                    totalTasks: total,
-                    completedTasks: completed,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 10),
+                    child: Row(
+                      children: const [
+                        // 1. Lọc Ngày
+                        DateFilterChip(),
+                        SizedBox(width: 8),
+
+                        // 2. Lọc Trạng thái
+                        StatusFilterChip(
+                            label: "Chưa xong", statusValue: false),
+                        SizedBox(width: 8),
+                        StatusFilterChip(label: "Đã xong", statusValue: true),
+                        SizedBox(width: 8),
+
+                        // 3. Lọc Màu (Ví dụ)
+                        PriorityFilterChip(label: "Thường", colorIndex: 0),
+                        SizedBox(width: 8),
+                        PriorityFilterChip(label: "Lưu ý", colorIndex: 1),
+                        SizedBox(width: 8),
+                        PriorityFilterChip(label: "Gấp", colorIndex: 2),
+                        SizedBox(width: 8),
+                        PriorityFilterChip(label: "Thư giãn", colorIndex: 3),
+                      ],
+                    ),
                   ),
                 ),
+                // -------------------------------------
 
-                // 3. DANH SÁCH CÔNG VIỆC
+                // 4. DANH SÁCH CÔNG VIỆC
                 tasks.isEmpty
                     ? SliverFillRemaining(
                         // Dùng cái này thay cho Expanded khi ở trong CustomScrollView
@@ -220,8 +201,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           (context, index) {
                             final task = tasks[index];
                             return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 24),
+                              padding: const EdgeInsets.only(
+                                  left: 24,
+                                  right: 24,
+                                  bottom: 16 // <--- CHUYỂN MARGIN VỀ ĐÂY
+                                  ),
                               child: Slidable(
                                 key: ValueKey(task.id),
                                 endActionPane: ActionPane(
@@ -231,12 +215,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                     SlidableAction(
                                       onPressed: (context) =>
                                           taskProvider.deleteTask(task.id),
-                                      backgroundColor:
-                                          AppColors.scaffoldBackground,
-                                      foregroundColor: Colors.red,
+                                      backgroundColor: Colors.redAccent,
+                                      foregroundColor: Colors.white,
                                       icon: Icons.delete_outline_rounded,
                                       label: 'Xóa',
-                                      borderRadius: BorderRadius.circular(16),
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius
+                                            .zero, // VUÔNG (để khớp với Card)
+                                        bottomLeft: Radius
+                                            .zero, // VUÔNG (để khớp với Card)
+                                        topRight: Radius.circular(20), // TRÒN
+                                        bottomRight:
+                                            Radius.circular(20), // TRÒN
+                                      ),
                                     ),
                                   ],
                                 ),

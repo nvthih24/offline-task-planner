@@ -62,23 +62,27 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
     final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black;
     final hintColor = theme.textTheme.bodyMedium?.color?.withOpacity(0.5);
 
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+
     return Container(
       padding: EdgeInsets.only(
-          left: 24, right: 24, top: 24, bottom: bottomInset + 24),
+          left: 20, right: 20, top: 20, bottom: bottomInset + 20),
       decoration: BoxDecoration(
         color: cardColor, // SỬA: Nền động
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // 1. Thanh nắm kéo (Handle bar)
             Center(
               child: Container(
                 width: 40,
                 height: 4,
+                margin: const EdgeInsets.only(bottom: 20),
                 decoration: BoxDecoration(
                   color: Colors.grey
                       .withOpacity(0.3), // Màu trung tính cho cả 2 mode
@@ -86,7 +90,6 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                 ),
               ),
             ),
-            const SizedBox(height: 24),
 
             // 2. Tiêu đề
             Text(
@@ -96,6 +99,7 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                 fontWeight: FontWeight.bold,
                 color: textColor, // SỬA: Màu chữ động
               ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
 
