@@ -37,8 +37,6 @@ A **Soft Minimalist** To-Do List application built with Flutter. Designed to hel
 |:---:|:---:|:---:|
 | <img src="screenshots/home.png" width="250"> | <img src="screenshots/focus.png" width="250"> | <img src="screenshots/stats.png" width="250"> |
 
-*(Note: Please add screenshots to a `screenshots` folder in your root directory)*
-
 ---
 
 ## 🛠 Tech Stack
