@@ -116,7 +116,7 @@ To run this project locally, follow these steps:
 - Clone the repository
 
 ```text
-git clone https://github.com/nvthih24/offline-task-planner.git (https://github.com/nvthih24/offline-task-planner.git)
+git clone [https://github.com/nvthih24/offline-task-planner.git](https://github.com/nvthih24/offline-task-planner.git)
 ```
 
 - Install dependencies
