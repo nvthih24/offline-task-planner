@@ -67,7 +67,7 @@ class _PagesState extends State<Pages> {
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
             child: GNav(
               rippleColor: Colors.grey[300]!, // Màu hiệu ứng gợn sóng
               hoverColor: Colors.grey[100]!, // Màu khi di chuột (Web)
@@ -75,7 +75,7 @@ class _PagesState extends State<Pages> {
               activeColor: AppColors.primary, // Màu Icon và Chữ khi được chọn
               iconSize: 24, // Kích thước Icon
               padding: const EdgeInsets.symmetric(
-                  horizontal: 20, vertical: 12), // Độ dày của nút
+                  horizontal: 10, vertical: 12), // Độ dày của nút
               duration: const Duration(milliseconds: 400), // Tốc độ hiệu ứng
 
               // Màu nền của Tab khi được chọn (Quan trọng cho style Soft Minimalist)
