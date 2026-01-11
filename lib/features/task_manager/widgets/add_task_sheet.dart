@@ -62,8 +62,6 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
     final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black;
     final hintColor = theme.textTheme.bodyMedium?.color?.withOpacity(0.5);
 
-    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-
     return Container(
       padding: EdgeInsets.only(
           left: 20, right: 20, top: 20, bottom: bottomInset + 20),
@@ -164,64 +162,64 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                   fontWeight: FontWeight.w600, color: hintColor, fontSize: 14),
             ),
             const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Wrap(
-                  spacing: 12,
-                  children: List.generate(4, (index) {
-                    return GestureDetector(
-                      onTap: () => setState(() => _selectedColorIndex = index),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        padding: const EdgeInsets.all(3),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              color: _selectedColorIndex == index
-                                  ? AppColors.getPriorityColor(index)
-                                  : Colors.transparent,
-                              width: 2),
-                        ),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: AppColors.getPriorityColor(index),
-                            shape: BoxShape.circle,
-                          ),
-                          child: _selectedColorIndex == index
-                              ? const Icon(Icons.check,
-                                  color: Colors.white, size: 20)
-                              : null,
-                        ),
-                      ),
-                    );
-                  }),
-                ),
 
-                // 7. Nút Lưu
-                ElevatedButton.icon(
-                  onPressed: _saveTask,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+            Wrap(
+              spacing: 12,
+              children: List.generate(4, (index) {
+                return GestureDetector(
+                  onTap: () => setState(() => _selectedColorIndex = index),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          color: _selectedColorIndex == index
+                              ? AppColors.getPriorityColor(index)
+                              : Colors.transparent,
+                          width: 2),
                     ),
-                    elevation: 0,
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: AppColors.getPriorityColor(index),
+                        shape: BoxShape.circle,
+                      ),
+                      child: _selectedColorIndex == index
+                          ? const Icon(Icons.check,
+                              color: Colors.white, size: 20)
+                          : null,
+                    ),
                   ),
-                  icon: const Icon(Icons.send_rounded, size: 20),
-                  label: Text(
-                    isEdit ? "Lưu lại" : "Tạo việc",
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                ),
-              ],
+                );
+              }),
             ),
+            const SizedBox(height: 30),
+
+            SizedBox(
+              width: double.infinity, // Chiếm hết chiều ngang
+              child: ElevatedButton.icon(
+                onPressed: _saveTask,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16), // Cao hơn xíu
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 0,
+                ),
+                icon: const Icon(Icons.send_rounded, size: 20),
+                label: Text(
+                  isEdit ? "Lưu thay đổi" : "Tạo công việc ngay",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
           ],
         ),
       ),
