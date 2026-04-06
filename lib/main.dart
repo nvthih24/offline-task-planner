@@ -8,15 +8,23 @@ import 'features/task_manager/logic/task_provider.dart';
 import 'features/task_manager/logic/theme_provider.dart';
 import 'features/home/screens/pages.dart';
 import 'core/services/notification_service.dart';
+import 'data/models/user_model.dart';
+import 'package:provider/provider.dart';
+import 'features/auth/logic/auth_provider.dart';
+import 'features/auth/screens/login_screen.dart';
+import 'features/home/screens/home_screen.dart';
 
 const String taskBoxName = 'tasks';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
+  Hive.registerAdapter(UserModelAdapter());
   Hive.registerAdapter(TaskAdapter());
   await Hive.openBox<Task>(taskBoxName);
   await Hive.openBox('settings');
+  await Hive.openBox<UserModel>('usersBox'); // Lưu danh sách tài khoản
+  await Hive.openBox('sessionBox'); // Lưu phiên đăng nhập (ai đang dùng app)
 
   try {
     await NotificationService().init();
@@ -27,6 +35,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => TaskProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
@@ -42,59 +51,57 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDarkMode;
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Simple Task',
-      themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
-      // === THIẾT LẬP THEME SÁNG TINH TẾ ===
-      theme: ThemeData(
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: AppColors.scaffoldBackground,
-        primaryColor: AppColors.primary,
-        cardColor: AppColors.cardColor,
-        // Font chữ sạch sẽ (Inter hoặc Roboto)
-        textTheme: GoogleFonts.nunitoTextTheme().apply(
-          bodyColor: AppColors.textPrimary,
-          displayColor: AppColors.textPrimary,
-        ),
-
-        appBarTheme: const AppBarTheme(
-          backgroundColor: AppColors.scaffoldBackground,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          iconTheme: IconThemeData(color: AppColors.textPrimary),
-          titleTextStyle: TextStyle(
-            color: AppColors.textPrimary,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
+        debugShowCheckedModeBanner: false,
+        title: 'Simple Task',
+        themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
+        // === THIẾT LẬP THEME SÁNG TINH TẾ ===
+        theme: ThemeData(
+          brightness: Brightness.light,
+          scaffoldBackgroundColor: AppColors.scaffoldBackground,
+          primaryColor: AppColors.primary,
+          cardColor: AppColors.cardColor,
+          // Font chữ sạch sẽ (Inter hoặc Roboto)
+          textTheme: GoogleFonts.nunitoTextTheme().apply(
+            bodyColor: AppColors.textPrimary,
+            displayColor: AppColors.textPrimary,
           ),
-        ),
 
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: AppColors.primary,
-            background: AppColors.scaffoldBackground,
-            brightness: Brightness.light,
-            surface: AppColors.cardColor),
-      ),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: AppColors.scaffoldBackground,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            iconTheme: IconThemeData(color: AppColors.textPrimary),
+            titleTextStyle: TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
 
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: AppColors.scaffoldDark,
-        primaryColor: AppColors.primary,
-        cardColor: AppColors.cardDark, // Màu thẻ tối
-        // Cấu hình chữ cho nền tối
-        textTheme: GoogleFonts.nunitoTextTheme().apply(
-          bodyColor: AppColors.textPrimaryDark,
-          displayColor: AppColors.textPrimaryDark,
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: AppColors.primary,
+              background: AppColors.scaffoldBackground,
+              brightness: Brightness.light,
+              surface: AppColors.cardColor),
         ),
-        colorScheme: const ColorScheme.dark(
-          primary: AppColors.primary,
-          surface: AppColors.cardDark,
-          background: AppColors.scaffoldDark,
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: AppColors.scaffoldDark,
+          primaryColor: AppColors.primary,
+          cardColor: AppColors.cardDark, // Màu thẻ tối
+          // Cấu hình chữ cho nền tối
+          textTheme: GoogleFonts.nunitoTextTheme().apply(
+            bodyColor: AppColors.textPrimaryDark,
+            displayColor: AppColors.textPrimaryDark,
+          ),
+          colorScheme: const ColorScheme.dark(
+            primary: AppColors.primary,
+            surface: AppColors.cardDark,
+            background: AppColors.scaffoldDark,
+          ),
+          useMaterial3: true,
         ),
-        useMaterial3: true,
-      ),
-      home: const Pages(),
-    );
+        home: const Pages());
   }
 }
