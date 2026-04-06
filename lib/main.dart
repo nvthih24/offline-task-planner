@@ -8,15 +8,23 @@ import 'features/task_manager/logic/task_provider.dart';
 import 'features/task_manager/logic/theme_provider.dart';
 import 'features/home/screens/pages.dart';
 import 'core/services/notification_service.dart';
+import 'data/models/user_model.dart';
+import 'package:provider/provider.dart';
+import 'features/auth/logic/auth_provider.dart';
+import 'features/auth/screens/login_screen.dart';
+import 'features/home/screens/home_screen.dart';
 
 const String taskBoxName = 'tasks';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
+  Hive.registerAdapter(UserModelAdapter());
   Hive.registerAdapter(TaskAdapter());
   await Hive.openBox<Task>(taskBoxName);
   await Hive.openBox('settings');
+  await Hive.openBox<UserModel>('usersBox'); // Lưu danh sách tài khoản
+  await Hive.openBox('sessionBox'); // Lưu phiên đăng nhập (ai đang dùng app)
 
   try {
     await NotificationService().init();
@@ -27,6 +35,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => TaskProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
@@ -94,7 +103,9 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const Pages(),
+      home: Hive.box('sessionBox').get('loggedInEmail') != null
+          ? const Pages() // Nếu đã có email trong session -> Đã đăng nhập -> Vào Trang chủ
+          : const LoginScreen(),
     );
   }
 }
