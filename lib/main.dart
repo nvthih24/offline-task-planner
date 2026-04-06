@@ -51,61 +51,57 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDarkMode;
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Simple Task',
-      themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
-      // === THIẾT LẬP THEME SÁNG TINH TẾ ===
-      theme: ThemeData(
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: AppColors.scaffoldBackground,
-        primaryColor: AppColors.primary,
-        cardColor: AppColors.cardColor,
-        // Font chữ sạch sẽ (Inter hoặc Roboto)
-        textTheme: GoogleFonts.nunitoTextTheme().apply(
-          bodyColor: AppColors.textPrimary,
-          displayColor: AppColors.textPrimary,
-        ),
-
-        appBarTheme: const AppBarTheme(
-          backgroundColor: AppColors.scaffoldBackground,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          iconTheme: IconThemeData(color: AppColors.textPrimary),
-          titleTextStyle: TextStyle(
-            color: AppColors.textPrimary,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
+        debugShowCheckedModeBanner: false,
+        title: 'Simple Task',
+        themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
+        // === THIẾT LẬP THEME SÁNG TINH TẾ ===
+        theme: ThemeData(
+          brightness: Brightness.light,
+          scaffoldBackgroundColor: AppColors.scaffoldBackground,
+          primaryColor: AppColors.primary,
+          cardColor: AppColors.cardColor,
+          // Font chữ sạch sẽ (Inter hoặc Roboto)
+          textTheme: GoogleFonts.nunitoTextTheme().apply(
+            bodyColor: AppColors.textPrimary,
+            displayColor: AppColors.textPrimary,
           ),
-        ),
 
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: AppColors.primary,
-            background: AppColors.scaffoldBackground,
-            brightness: Brightness.light,
-            surface: AppColors.cardColor),
-      ),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: AppColors.scaffoldBackground,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            iconTheme: IconThemeData(color: AppColors.textPrimary),
+            titleTextStyle: TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
 
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: AppColors.scaffoldDark,
-        primaryColor: AppColors.primary,
-        cardColor: AppColors.cardDark, // Màu thẻ tối
-        // Cấu hình chữ cho nền tối
-        textTheme: GoogleFonts.nunitoTextTheme().apply(
-          bodyColor: AppColors.textPrimaryDark,
-          displayColor: AppColors.textPrimaryDark,
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: AppColors.primary,
+              background: AppColors.scaffoldBackground,
+              brightness: Brightness.light,
+              surface: AppColors.cardColor),
         ),
-        colorScheme: const ColorScheme.dark(
-          primary: AppColors.primary,
-          surface: AppColors.cardDark,
-          background: AppColors.scaffoldDark,
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: AppColors.scaffoldDark,
+          primaryColor: AppColors.primary,
+          cardColor: AppColors.cardDark, // Màu thẻ tối
+          // Cấu hình chữ cho nền tối
+          textTheme: GoogleFonts.nunitoTextTheme().apply(
+            bodyColor: AppColors.textPrimaryDark,
+            displayColor: AppColors.textPrimaryDark,
+          ),
+          colorScheme: const ColorScheme.dark(
+            primary: AppColors.primary,
+            surface: AppColors.cardDark,
+            background: AppColors.scaffoldDark,
+          ),
+          useMaterial3: true,
         ),
-        useMaterial3: true,
-      ),
-      home: Hive.box('sessionBox').get('loggedInEmail') != null
-          ? const Pages() // Nếu đã có email trong session -> Đã đăng nhập -> Vào Trang chủ
-          : const LoginScreen(),
-    );
+        home: const Pages());
   }
 }

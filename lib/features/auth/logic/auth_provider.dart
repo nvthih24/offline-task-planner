@@ -34,4 +34,10 @@ class AuthProvider with ChangeNotifier {
     }
     return false; // Sai email hoặc pass
   }
+
+  Future<void> logout() async {
+    _currentUser = null;
+    await _sessionBox.delete('loggedInEmail');
+    notifyListeners(); // Cập nhật lại giao diện ngay lập tức
+  }
 }
