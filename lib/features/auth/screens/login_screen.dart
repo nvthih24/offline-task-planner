@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../logic/auth_provider.dart';
 import 'register_screen.dart';
+import '../../home/screens/pages.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -29,8 +30,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (success) {
         if (!mounted) return;
-        // Chuyển sang màn hình Home sau khi đăng nhập thành công
-        Navigator.pushReplacementNamed(context, '/home');
+        // Chuyển thẳng sang class Pages (chứa Trang chủ và Bottom Nav Bar)
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const Pages()),
+        );
       } else {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(

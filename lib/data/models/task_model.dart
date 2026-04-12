@@ -29,6 +29,10 @@ class Task extends HiveObject {
   @HiveField(7)
   int colorIndex; // Lưu màu sắc của Task (0: Xanh, 1: Đỏ...) để UI đẹp hơn
 
+  @HiveField(8, defaultValue: '') // Mặc định là chuỗi rỗng nếu không có email
+  String
+      userEmail; // Lưu email của người dùng để phân biệt Task giữa các tài khoản
+
   Task({
     required this.id,
     required this.title,
@@ -38,5 +42,6 @@ class Task extends HiveObject {
     required this.endTime,
     required this.isCompleted,
     required this.colorIndex,
+    this.userEmail = '',
   });
 }

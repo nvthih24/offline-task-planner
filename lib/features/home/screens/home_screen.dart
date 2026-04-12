@@ -11,6 +11,9 @@ import '../../task_manager/widgets/add_task_sheet.dart';
 import '../widgets/task_tile.dart';
 import '../widgets/filter_chips.dart';
 
+import '../../auth/logic/auth_provider.dart';
+import '../../auth/screens/login_screen.dart';
+
 import 'search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -46,95 +49,142 @@ class _HomeScreenState extends State<HomeScreen> {
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(24, 24, 24, 10),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Chào bạn,",
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    color: textSecondaryColor,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                activeTasks > 0
-                                    ? "Bạn có $activeTasks việc cần làm"
-                                    : "Mọi việc đã hoàn tất! 🎉",
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                    // Dùng Consumer để lắng nghe trạng thái Đăng nhập
+                    child: Consumer<AuthProvider>(
+                      builder: (context, authProvider, _) {
+                        final user = authProvider.currentUser;
 
-                        // Nút tìm kiếm (Giả lập)
-                        Container(
-                          margin: const EdgeInsets.only(right: 12),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Colors.grey.withOpacity(0.05),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4))
-                            ],
-                          ),
-                          child: IconButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const SearchScreen(),
-                                ),
-                              );
-                            },
-                            icon: const Icon(
-                              Icons.search_rounded,
-                              color: AppColors.primary,
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    // Thay đổi lời chào linh hoạt
+                                    user != null
+                                        ? "Chào ${user.displayName},"
+                                        : "Chào bạn,",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: textSecondaryColor,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    activeTasks > 0
+                                        ? "Bạn có $activeTasks việc cần làm"
+                                        : "Mọi việc đã hoàn tất! 🎉",
+                                    style: const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            tooltip: 'Tìm kiếm',
-                          ),
-                        ),
 
-                        // Box Ngày tháng
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Colors.grey.withOpacity(0.05),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4))
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              Text(DateFormat('d').format(DateTime.now()),
-                                  style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.primary)),
-                              Text(
-                                  DateFormat('MMM')
-                                      .format(DateTime.now())
-                                      .toUpperCase(),
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: textSecondaryColor)),
-                            ],
-                          ),
-                        )
-                      ],
+                            // --- NÚT ĐĂNG NHẬP / ĐĂNG XUẤT ---
+                            if (user == null)
+                              Container(
+                                margin: const EdgeInsets.only(right: 12),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withOpacity(0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: IconButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) => const LoginScreen()),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.login_rounded,
+                                      color: AppColors.primary),
+                                  tooltip: 'Đăng nhập',
+                                ),
+                              )
+                            else
+                              Container(
+                                margin: const EdgeInsets.only(right: 12),
+                                decoration: BoxDecoration(
+                                  color: Colors.redAccent.withOpacity(0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: IconButton(
+                                  onPressed: () => authProvider.logout(),
+                                  icon: const Icon(Icons.logout_rounded,
+                                      color: Colors.redAccent),
+                                  tooltip: 'Đăng xuất',
+                                ),
+                              ),
+                            // ---------------------------------
+
+                            // Nút tìm kiếm (Giữ nguyên của ông)
+                            Container(
+                              margin: const EdgeInsets.only(right: 12),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).cardColor,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.grey.withOpacity(0.05),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4))
+                                ],
+                              ),
+                              child: IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const SearchScreen(),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.search_rounded,
+                                  color: AppColors.primary,
+                                ),
+                                tooltip: 'Tìm kiếm',
+                              ),
+                            ),
+
+                            // Box Ngày tháng (Giữ nguyên của ông)
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).cardColor,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.grey.withOpacity(0.05),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4))
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  Text(DateFormat('d').format(DateTime.now()),
+                                      style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.primary)),
+                                  Text(
+                                      DateFormat('MMM')
+                                          .format(DateTime.now())
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: textSecondaryColor)),
+                                ],
+                              ),
+                            )
+                          ],
+                        );
+                      },
                     ),
                   ),
                 ),

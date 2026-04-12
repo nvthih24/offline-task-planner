@@ -6,6 +6,8 @@ import '../../../core/services/notification_service.dart';
 
 class TaskProvider extends ChangeNotifier {
   final Box<Task> _box = Hive.box<Task>('tasks');
+  final Box _sessionBox =
+      Hive.box('sessionBox'); // THÊM DÒNG NÀY: Mở session để lấy email
 
   // --- GAMIFICATION VARIABLES ---
   late Box _statsBox;
@@ -39,7 +41,12 @@ class TaskProvider extends ChangeNotifier {
   int get filterPriority => _filterPriority;
 
   List<Task> get tasks {
-    var taskList = _box.values.toList().cast<Task>();
+    // THÊM LOGIC Ở ĐÂY: Lọc lấy các task có ownerEmail trùng với người đang đăng nhập
+    final currentEmail = _sessionBox.get('loggedInEmail') ?? '';
+    var taskList = _box.values
+        .where((t) => t.userEmail == currentEmail)
+        .toList()
+        .cast<Task>();
 
     if (_filterPriority != -1) {
       taskList =
@@ -140,6 +147,9 @@ class TaskProvider extends ChangeNotifier {
     required DateTime endTime,
     required int colorIndex,
   }) {
+    // Lấy email người dùng để gán cho Task mới
+    final currentEmail = _sessionBox.get('loggedInEmail') ?? '';
+
     final newTask = Task(
       id: const Uuid().v4(),
       title: title,
@@ -149,6 +159,7 @@ class TaskProvider extends ChangeNotifier {
       endTime: endTime,
       isCompleted: false,
       colorIndex: colorIndex,
+      userEmail: currentEmail, // THÊM DÒNG NÀY: Lưu bản quyền người tạo
     );
 
     _box.add(newTask);
@@ -270,6 +281,11 @@ class TaskProvider extends ChangeNotifier {
 
   void setFilterDate(DateTime? date) {
     _filterDate = date;
+    notifyListeners();
+  }
+
+  // THÊM HÀM NÀY: Để làm mới danh sách khi Đăng nhập / Đăng xuất
+  void refreshTasks() {
     notifyListeners();
   }
 }
